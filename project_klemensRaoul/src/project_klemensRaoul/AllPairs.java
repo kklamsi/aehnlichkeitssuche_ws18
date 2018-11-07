@@ -3,23 +3,41 @@ package project_klemensRaoul;
 
 import java.util.*;
 //import javax.swing.JOptionPane;
+import java.util.stream.Collectors;
 
 
 public class AllPairs {
 	
 	public static void main(String[] args) {
 		
+		long start = System.nanoTime();
+		
 		// initialize simple dataset:
-		int[][] data = {{1,2,4}, 
-						{1,3,4,5},
-						{1,2,4,5,7},
-						{2,3,5,6,7,9}};
+		int[][] data = {{1,3,5}, 
+						{1,2,3,4},
+						{1,2,4,9,11},
+						{1,3,5,8,9,10,11,12,13,14}};
+		
+		System.out.println(data[0][2]);
+		//ArrayList<Integer>[];
+		
+		int[][] invertedInd = new int[data[data.length-1][data[data.length-1].length-1]][data.length];
+		System.out.println(invertedInd[0][3]);
+		
+		
+		for(int i = 0; i < data.length; i++) {
+			for (int j = 0; j < data[i].length; j++) {
+				invertedInd[data[0][0]][i] = i;
+			}
+		}
+		
+		System.out.println(invertedInd[1][0]);
 		
 		/*
-		//int[] r1 = {1,2,4};
-		int[] r2 = {1,3,4,5};
-		int[] r3 = {1,2,4,5,7};
-		int[] r4 = {2,3,5,6,7,9};
+		//int[] r1 = {1,3,5};
+		int[] r2 = {1,2,3,4};
+		int[] r3 = {1,2,4,9,11};
+		int[] r4 = {1,3,5,8,9,10,11,12,13,14};
 		
 		ArrayList<Integer> r1 = new ArrayList<Integer>();
 		r1.add(1);
@@ -44,23 +62,41 @@ public class AllPairs {
 		
 		
 		// inverted list:
-		HashMap<Integer, ArrayList<String>> invertedList = new HashMap<Integer, ArrayList<String>>();
-		ArrayList<String> helper = new ArrayList<String>();
+		
+			/*
+		  	Map<String, Character> myNewHashMap = new HashMap<>();
+			for(Map.Entry<Character, String> entry : myHashMap.entrySet()){
+    		myNewHashMap.put(entry.getValue(), entry.getKey());
+			}
+		 	https://stackoverflow.com/questions/20412354/reverse-hashmap-keys-and-values-in-java
+		 	*/
+		
 
-		int k = 1;
 
+		
+		HashMap<Integer, SortedSet<String>> invertedList = new HashMap<Integer, SortedSet<String>>();
+		SortedSet<String> helper = new TreeSet<>();
+
+		//int k = 1;
+		for (int k = 1; k < 15; k++) {
 		for (int i = 0; i < data.length; i++) {
 			
 			for (int j = 0; j < data[i].length; j++) {
-				if(data[i][j] == k) {
+				if(data[i][j] == 1) {
 					helper.add("r"+(i+1));
 				}
 	        	invertedList.put(data[i][j], helper);       	
-	        }		
+	        }	
 		} 
+		}
+		
+		long end = System.nanoTime();
+		
+		int k = 1;
 		
 		System.out.println("key set: " + invertedList.keySet());
 		System.out.println("rows with " + k + ": " + invertedList.get(1));
+		System.out.println((end - start)*0.000000001 + " Sekunden");
 
 	
 	}
