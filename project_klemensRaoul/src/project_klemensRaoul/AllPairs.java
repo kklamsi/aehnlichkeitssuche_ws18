@@ -10,7 +10,7 @@ public class AllPairs {
 	
 	public static void main(String[] args) {
 		
-		long start = System.nanoTime();
+		double threshold = .5;
 		
 		// probably way to complicated...
 		
@@ -29,7 +29,33 @@ public class AllPairs {
 		System.out.println(dataA.get(3).size());
 		System.out.println(dataA.get(3).get(9));
 		
-		List<SortedSet<Integer>> index = new ArrayList<SortedSet<Integer>>(); 
+		long start = System.nanoTime(); // start timing
+		
+		// invertedIndex:
+		List<SortedSet<Integer>> index = new ArrayList<SortedSet<Integer>>(); /* I inverted list index covering prefix of sets */
+		
+		for(int r : dataA.get()) { /* process in ascending length order of r */
+			Map<Integer, Integer> candidate = new HashMap<>(); 		/* dictionary for candidate set.  Key:  candidate,
+																	value:  number of intersecting tokens found so far.  */
+				
+			int eqo; // t/(t+1)*(r.length + r.length)
+			int lowerBound;	// threshold * r.length
+			int probingPrefixLength; // r.length - lowerBound + 1
+			int indexingPrefixLength; // r.length - eqo(r, r) + 1
+				
+				for(int p = 0; p < probingPrefixLength-1; p++) { /*	pi_r: probing prefix length of r */
+					
+					for(int s = 0; s < index; s++) { 
+						
+						if(s.length < lowerBound) { /* lb_r: length bound */
+							// remove index entry s => shift to the next position
+						}
+						else if(s)
+					}
+								
+				}
+		}
+		
 		
 		/*
 		for(int i = 0; i < dataA.size(); i++) {
