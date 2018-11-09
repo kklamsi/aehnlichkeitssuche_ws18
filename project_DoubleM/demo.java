@@ -6,7 +6,7 @@ public class demo {
 
 	public static void main(String[] args) {
 		// read in every line and just print it
-		SOS_Reader rdr = new SOS_Reader("C:\\Users\\Marcel\\Documents\\git\\Ähnlichkeitssuche\\Data\\folien.txt");
+		SOS_Reader rdr = new SOS_Reader("C:\\Users\\Marcel\\Documents\\git\\Ähnlichkeitssuche\\Data\\folien.txt"); // Change this to your file's location
 		// Later we change the rdr, so on "next" it returns the next line
 		// without scanning the whole document before and saving it in the SOS_Reader object
 		double t_j = 0.5;
