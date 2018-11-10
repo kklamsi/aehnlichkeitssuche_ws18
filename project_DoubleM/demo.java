@@ -6,10 +6,13 @@ public class demo {
 
 	public static void main(String[] args) {
 		// read in every line and just print it
-		SOS_Reader rdr = new SOS_Reader("C:\\Users\\Marcel\\Documents\\git\\Ähnlichkeitssuche\\Data\\folien.txt"); // Change this to your file's location
+//		SOS_Reader rdr = new SOS_Reader("C:\\Users\\Marcel\\Documents\\git\\Ähnlichkeitssuche\\Data\\folien_mod.txt");
+		SOS_Reader rdr = new SOS_Reader("C:\\Users\\Marcel\\Documents\\git\\Ähnlichkeitssuche\\Data\\folien.txt");
 		// Later we change the rdr, so on "next" it returns the next line
 		// without scanning the whole document before and saving it in the SOS_Reader object
 		double t_j = 0.5;
+		
+		int pairs = 0;
 		
 		System.out.println("Min Value " + rdr.min_value());
 //		int j = 10;
@@ -21,7 +24,7 @@ public class demo {
 		
 //		Set of all Sets
 		
-		ArrayList<ArrayList<Integer>> SetofSets = rdr.getAllSets();
+		ArrayList<ArrayList<Integer>> R = rdr.getAllSets();
 		ArrayList<Integer> r; //ArrayList for the current set from SetofSets
 		double lb_r; // Lower bound for probing set
 		
@@ -44,23 +47,30 @@ public class demo {
 		ArrayList<Integer> current_I_Array; // ArrayList for number from the Inverted list
 		int currentStartingValue; //Where in the current_I_Array should i begin to look for possible matches
 		
-		int setOfSetsindex_of_current_inv_list_set; //the index of the current set from the for loop that runs through one ArrayList of the inverted list - This is the location of the set in SetOfSets
+		int R_index_of_current_inv_list_set; //the index of the current set from the for loop that runs through one ArrayList of the inverted list - This is the location of the set in SetOfSets
 		
 		HashMap<Integer, Integer> M; // M Map, with key = Candidate(Set) Index, value = number of intersecting tokens so far
 		int c = 0;
-		for(int i = 0; i < SetofSets.size(); i ++) {
+		for(int i = 0; i < R.size(); i ++) {
 			M = new HashMap<>(); // empty HashMap
 			c++;
 		
 			
 			//get current probing set
-			r = SetofSets.get(i);
-			System.out.println("Current Set" + r.toString());
+			r = R.get(i);
+			System.out.println("Current Set r" + (i+1) + ": "+ r.toString());
 			//get probing prefix length of set r
-			probing_prefix_length_r = probing_prefix_length(r, t_j);
+			probing_prefix_length_r = probing_prefix_length(r.size(), t_j);
+			indexing_prefix_length_r = indexing_prefix_length(r.size(), t_j);
 			//get lower bound of size for matching with set r
 			lb_r = lbr( t_j, r.size());
 
+//			System.out.println("Probing Prefix Length: " + probing_prefix_length_r);
+//			System.out.println("Indexing Prefix Length: " + indexing_prefix_length_r);
+//			System.out.println("Lower bound: " + lb_r);
+//			System.out.println("EQO_self: " + eqoverlap(t_j, r.size(), r.size()));
+//			
+			
 			if(i != 0) {
 				for(int p = 0; p < probing_prefix_length_r; p ++) { // Zeile 5
 					
@@ -70,27 +80,27 @@ public class demo {
 
 
 					arrayIndex_InvertedList = currentNumber_of_r - rdr.min_value();
-					System.out.println("arrayIndex_InvertedList " + arrayIndex_InvertedList);
+//					System.out.println("arrayIndex_InvertedList " + arrayIndex_InvertedList);
 					current_I_Array = I[arrayIndex_InvertedList];
-					System.out.println(current_I_Array);
+//					System.out.println(current_I_Array);
 					
 					if(current_I_Array != null) {
 						currentStartingValue = startValues[arrayIndex_InvertedList];
 						
 						
-						for (int j = currentStartingValue; j < current_I_Array.size(); j ++) { 
-							setOfSetsindex_of_current_inv_list_set = current_I_Array.get(j);
+						for (int j = currentStartingValue; j < current_I_Array.size(); j ++) { //Zeile 10
+							R_index_of_current_inv_list_set = current_I_Array.get(j);
 							
-							if(SetofSets.get(setOfSetsindex_of_current_inv_list_set).size() < lb_r) { // Zeil 8
+							if(R.get(R_index_of_current_inv_list_set).size() < lb_r) { // Zeil 8
 								// increment starting value in startingValues array at location [currentNumber_of_r - rdr.min]
 								startValues[arrayIndex_InvertedList]++; // Zeile 10
 								
 							}else {
 								
-								if(M.get(setOfSetsindex_of_current_inv_list_set) == null) {
-									M.put(setOfSetsindex_of_current_inv_list_set, 0);
+								if(M.get(R_index_of_current_inv_list_set) == null) {
+									M.put(R_index_of_current_inv_list_set, 0);
 								}
-								M.put(setOfSetsindex_of_current_inv_list_set, M.get(setOfSetsindex_of_current_inv_list_set) + 1); // Zeile 14		
+								M.put(R_index_of_current_inv_list_set, M.get(R_index_of_current_inv_list_set) + 1); // Zeile 14		
 							}
 						}
 					}
@@ -102,24 +112,25 @@ public class demo {
 			
 			
 			//Update Inverted List Index
-			System.out.println("Size r :" + r.size());
-			indexing_prefix_length_r = indexing_prefix_length(r.size(), t_j);
-			System.out.println("EQO of current set:" + eqoverlap(t_j,  r.size(),   r.size()));
-			System.out.println("Indexing Prefix length of current set: " + indexing_prefix_length_r);
+//			System.out.println("Size r :" + r.size());
 			
-//			System.out.println("Laenge indexing prefix" + indexing_prefix_length_r);
+//			System.out.println("EQO of current set:" + eqoverlap(t_j,  r.size(),   r.size()));
+//			System.out.println("Indexing Prefix length of current set: " + indexing_prefix_length_r);
+
+			
+			
 			// Loop over every element of the indexing prefix of set r
 			// and add the INDEX of the set r to the hashmap key of the current element
 			
 			for(int p = 0; p < indexing_prefix_length_r; p++) { //Zeile 15
 				currentNumber_of_r = r.get(p);
-				System.out.println("Adding number " + currentNumber_of_r + " to the inverted list");
+//				System.out.println("Adding number " + currentNumber_of_r + " to the inverted list");
 				//add this number to the right position in the inverted list array
 				// Position = currentNumber_of_r - rdr.min //Try in your head
 //				I[Position] is ArrayList of Integers giving the locations of the sets in the SetOfSets
 				
 				arrayIndex_InvertedList = currentNumber_of_r - rdr.min_value();
-				System.out.println("Position in Inverted List: " + arrayIndex_InvertedList);
+//				System.out.println("Position in Inverted List: " + arrayIndex_InvertedList);
 				
 
 				if(I[arrayIndex_InvertedList] == null) {
@@ -133,18 +144,130 @@ public class demo {
 			
 			// get indexing prefix of set r:?
 			
+			//Print M:
+			System.out.println("  Printing Candidates for set r" + (i+1));
+			System.out.println("    " + M.toString());
 			
+			
+			
+			//Verify:
+			pairs+=Verify(i, R, r, M, t_j);
 
+			
 		}
 
 		System.out.println("We have " +  c + " Sets in our file");
 	
-		size_array(I);
+//		size_array(I);
 		
-		InvList_toString(I);
+//		InvList_toString(I);
+		
+		
+//		//Print Start Values: startValues
+//		System.out.println("Printing Starting Values");
+//		print_array(startValues, rdr);
 
+		
+		System.out.println("Total Matches: " + pairs);
+		
+		
 	}
 
+	
+	private static int Verify(int index_set_r, ArrayList<ArrayList<Integer>> R, ArrayList<Integer> r, HashMap<Integer, Integer> M, double t_j) {
+//		input : r: probing set
+//				M: candidates map (candidate  -> overlap) 
+//				tJ: Jaccard threshold
+
+		
+		int res = 0;
+		boolean ret;
+		
+		
+		int o; // Overlap so far
+		
+		int probing_pre_length_r; // probing prefix length of r;
+		int indexing_pre_length_s; // indexing prefix length of s;
+
+		int w_r; // Last token of prefix in r (probing set r)
+		int w_s; // Last token of prefix in s (current candidate)
+		
+		ArrayList<Integer> s;
+		
+		int print_index_s;
+		
+		int t; //eqoverlap(r, s, t_j)
+		for(Integer index_s: M.keySet()) {
+			print_index_s = index_s + 1;
+			
+			// s is the index of the first element in M
+			// the corresponding value of that key is the overlap
+			o = M.get(index_s); //Get overlap of current set with probing set r calculated on the prefix of r
+			s = R.get(index_s); //complete set s
+			
+			System.out.println("  Verifying set r" + print_index_s + ": " + s.toString());
+			
+			probing_pre_length_r = probing_prefix_length(r.size(), t_j) ;
+			indexing_pre_length_s = indexing_prefix_length(s.size(), t_j);
+
+			w_r = r.get(probing_pre_length_r - 1);			// Last token of prefix in r
+			w_s = s.get(indexing_pre_length_s - 1);			// Last token of prefix in s
+
+			t = (int) Math.ceil(eqoverlap(t_j, r.size(), s.size()));
+			
+			System.out.println("     Overlap t needed to be reached: "  + t);
+			if(w_r < w_s) {
+				ret = verify_ssjoin_paper(index_s, index_set_r, r, s, t, o, probing_pre_length_r , o );
+			}else {
+				ret = verify_ssjoin_paper(index_s, index_set_r, r, s, t, o, o , indexing_pre_length_s );
+			}
+			if(ret) {
+				res++;
+			}
+		}
+		
+		
+		System.out.println("  Verified Set r" + (index_set_r+1) + ": " + r.toString());
+		System.out.println();
+		return res;
+	}
+	
+	
+	private static boolean verify_ssjoin_paper(int index_set_s, int index_set_r, ArrayList<Integer>r, ArrayList<Integer>s, double t, int olap, int pr, int ps) {
+		
+//	Input: 	r, s: 						sets to be verified (sorted arrays);
+//			t: 							required overlap;
+//			olap, pr, ps: 				overlap up to positions pr, ps in r, s
+//	Result: true if #Same elements in r and s >=  t, i.e., (r, s) is in the result set
+
+		index_set_r++;
+		index_set_s++;
+		int maxr = r.size() - pr + olap;
+		int maxs = s.size() - ps + olap;
+		
+		while(maxr >= t && maxs >= t && olap  < t) {
+			if(r.get(pr).equals(s.get(ps))) {
+				pr++;				ps++;				olap++;
+			}else if(r.get(pr) < s.get(ps)) {
+				pr++;				maxr--;
+			}else {
+				ps++;				maxs--;
+			}
+		}
+		
+		System.out.println("     Reached Overlap: " + olap);
+		if(olap >= t) {
+			System.out.println("     r" + index_set_r + ": " + r.toString() +  
+					" and r" + index_set_s + ": " + s.toString() + " are a match");		
+		}
+		return olap >= t;
+	}
+	
+	private static void print_array(int[] array, SOS_Reader rdr) {
+		for(int i = 0; i < array.length; i ++) {
+			System.out.println(i + rdr.min_value() + ": " + array[i]);
+		}
+	}
 	
 	private static void size_array(ArrayList<Integer>[] I) {
 		
@@ -185,13 +308,13 @@ public class demo {
 	}
 	//For both probing and indexing:
 	// Maybe calculate the size of the probing set once before and then give that as a paramters, instead of the set
-	private static int probing_prefix_length(ArrayList<Integer> probing_set, double t_j) 
+	private static int probing_prefix_length(int probing_set_size, double t_j) 
 	{
-			int size_set_probing = probing_set.size();
-			return size_set_probing - (int) Math.ceil(lbr(t_j, size_set_probing))  + 1;
+//			int size_set_probing = probing_set.size();
+			return probing_set_size - (int) Math.ceil(lbr(t_j, probing_set_size))  + 1;
 	}
-	private static int indexing_prefix_length(int probing_set_size, double t_j)
+	private static int indexing_prefix_length(int indexing_set_size, double t_j)
 	{
-		return probing_set_size - (int) Math.ceil(eqoverlap(t_j, probing_set_size, probing_set_size)) + 1;
+		return indexing_set_size - (int) Math.ceil(eqoverlap(t_j, indexing_set_size, indexing_set_size)) + 1;
 	}
 }
