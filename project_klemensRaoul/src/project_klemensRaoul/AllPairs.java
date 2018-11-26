@@ -13,10 +13,12 @@ public class AllPairs {
         return (t/(1+t))*(r.size()+s.size());
     }
 
+    // probing prefix length
     private static int pi_r(List<Integer> r, double t){
         return r.size()-(int)Math.ceil(t*r.size())+1;
     }
 
+    // indexing prefix length
     private static int pi_r_i(List<Integer> r,  double t){
         return r.size()-(int)Math.ceil(eqo(r,r,t))+1;
     }
@@ -67,8 +69,8 @@ public class AllPairs {
             overlap = entry.getValue();
             t = (int)Math.ceil(eqo(r, s, threshold));
 
-            p_r = pi_r(r, threshold);
-            p_s = pi_r(s, threshold);
+            p_r = pi_r(r, threshold);   //  probing prefix length of r
+            p_s = pi_r_i(s, threshold); // indexing prefix length of s
             w_r = r.get(p_r - 1);
             w_s = s.get(p_s - 1);
 
